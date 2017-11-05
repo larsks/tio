@@ -41,6 +41,7 @@ struct option_t
     bool log;
     const char *log_filename;
     const char *map;
+    bool nlcr;
 };
 
 extern struct option_t option;

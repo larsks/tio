@@ -19,6 +19,7 @@ _tio()
           -n --no-autoconnect \
           -l --log \
           -m --map \
+	  -c --nlcr \
           -v --version \
           -h --help"
 

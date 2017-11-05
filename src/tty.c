@@ -569,6 +569,9 @@ int tty_connect(void)
 
                 if (forward)
                 {
+                    if (option.nlcr && output_char == '\n')
+                        output_char = '\r';
+
                     /* Send output to tty device */
                     status = write(fd, &output_char, 1);
                     if (status < 0)
