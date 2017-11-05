@@ -209,6 +209,9 @@ void stdout_restore(void)
 
 void tty_configure(void)
 {
+    bool token_found = true;
+    char *token = NULL;
+    char *buffer;
     int status;
     speed_t baudrate;
 
@@ -335,6 +338,39 @@ void tty_configure(void)
     /* Control characters */
     tio.c_cc[VTIME] = 0; // Inter-character timer unused
     tio.c_cc[VMIN]  = 1; // Blocking read until 1 character received
+
+    /* Configure any specified input or output mappings */
+
+    buffer = strdup(option.map);
+    while (token_found == true)
+    {
+        if (token == NULL)
+            token = strtok(buffer,",");
+        else
+            token = strtok(NULL, ",");
+
+        if (token != NULL)
+        {
+            if (strcmp(token,"INLCR") == 0)
+                tio.c_iflag |= INLCR;
+            else if (strcmp(token,"IGNCR") == 0)
+                tio.c_iflag |= IGNCR;
+            else if (strcmp(token,"ICRNL") == 0)
+                tio.c_iflag |= ICRNL;
+            else if (strcmp(token,"ONLCR") == 0)
+                tio.c_oflag |= ONLCR;
+            else if (strcmp(token,"OCRNL") == 0)
+                tio.c_oflag |= OCRNL;
+            else
+            {
+                printf("Error: Unknown mapping flag %s\n", token);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else
+            token_found = false;
+    }
+    free(buffer);
 }
 
 void tty_wait_for_device(void)
